@@ -11,11 +11,16 @@ var WlCordovaGenerator = yeoman.generators.Base.extend({
     this.pkg = require('../package.json');
 
     this.on('end', function () {
-      console.log('\nInstalling ' + this.wlServiceGenerator + ' plugin');
+      console.log('\nInstalling ' + this.wlServiceGenerator + ' plugin for ' + this.mobilePlatform);
       if (!this.options['skip-install']) {
+        console.log('\n-->installing package dependencies');
         this.installDependencies();
       }
-
+      console.log('\n-->installing frameworks');
+      console.log('\n-->installing plugin native files');
+      console.log('\n-->installing plugin javascript files');
+      console.log('\n-->updating html to include plugin script tag');
+      console.log('\n-->ALL DONE!');
     });
   },
 
@@ -25,15 +30,51 @@ var WlCordovaGenerator = yeoman.generators.Base.extend({
     // Have Yeoman greet the user.
     this.log(yosay('Welcome to the marvelous WlCordova generator!'));
 
-    var prompts = [{
-      type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
-      default: true
-    }];
+    var prompts = [
+      {
+      type: 'list',
+      name: 'wlServiceGenerator',
+      message: 'Select a service plugin to install?',
+      choices: [
+          {
+              name: 'Bluemix CloudCode',
+              value: 'bluemix-cloudcode'
+          },
+          {
+              name: 'Bluemix Data',
+              value: 'bluemix-data'
+          },
+          {
+              name: 'Bluemix Push',
+              value: 'bluemix-push'
+          },
+          {
+              name: 'Other',
+              value: 'other'
+          }]
+      },
+      {
+        type: 'list',
+        name: 'mobilePlatform',
+        message: 'Choose a platform',
+        choices: [
+            {
+                name: 'Android',
+                value: 'platform-android'
+            },
+            {
+                name: 'iOS',
+                value: 'platform-ios'
+            },
+            {
+                name: 'ALL',
+                value: 'platform-all'
+            }]
+        }];
 
     this.prompt(prompts, function (props) {
-      this.someOption = props.someOption;
+      this.wlServiceGenerator = props.wlServiceGenerator;
+      this.mobilePlatform = props.mobilePlatform;
 
       done();
     }.bind(this));
@@ -52,43 +93,5 @@ var WlCordovaGenerator = yeoman.generators.Base.extend({
     this.copy('jshintrc', '.jshintrc');
   }
 });
-
-WlCordovaGenerator.prototype.askFor = function askFor() {
-    'use strict';
-    var cb,
-        prompts;
-    cb = this.async();
-
-    prompts = [{
-        type: 'list',
-        name: 'wlServiceGenerator',
-        message: 'Select a service plugin to install?',
-        choices: [
-            {
-                name: 'Bluemix CloudCode',
-                value: 'bluemix-cloudcode'
-            },
-            {
-                name: 'Bluemix Data',
-                value: 'bluemix-data'
-            },
-            {
-                name: 'Bluemix Push',
-                value: 'bluemix-push'
-            },
-            {
-                name: 'Other',
-                value: 'other'
-            }]
-        }];
-
-
-    this.prompt(prompts, function (props) {
-
-        this.wlServiceGenerator = props.wlServiceGenerator;
-
-        cb();
-    }.bind(this));
-};
 
 module.exports = WlCordovaGenerator;
