@@ -11,9 +11,11 @@ var WlCordovaGenerator = yeoman.generators.Base.extend({
     this.pkg = require('../package.json');
 
     this.on('end', function () {
+      console.log('\nInstalling ' + this.wlServiceGenerator + ' plugin');
       if (!this.options['skip-install']) {
         this.installDependencies();
       }
+
     });
   },
 
@@ -50,5 +52,43 @@ var WlCordovaGenerator = yeoman.generators.Base.extend({
     this.copy('jshintrc', '.jshintrc');
   }
 });
+
+WlCordovaGenerator.prototype.askFor = function askFor() {
+    'use strict';
+    var cb,
+        prompts;
+    cb = this.async();
+
+    prompts = [{
+        type: 'list',
+        name: 'wlServiceGenerator',
+        message: 'Select a service plugin to install?',
+        choices: [
+            {
+                name: 'Bluemix CloudCode',
+                value: 'bluemix-cloudcode'
+            },
+            {
+                name: 'Bluemix Data',
+                value: 'bluemix-data'
+            },
+            {
+                name: 'Bluemix Push',
+                value: 'bluemix-push'
+            },
+            {
+                name: 'Other',
+                value: 'other'
+            }]
+        }];
+
+
+    this.prompt(prompts, function (props) {
+
+        this.wlServiceGenerator = props.wlServiceGenerator;
+
+        cb();
+    }.bind(this));
+};
 
 module.exports = WlCordovaGenerator;
